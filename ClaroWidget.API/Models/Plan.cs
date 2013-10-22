@@ -96,6 +96,9 @@ namespace ClaroWidget.API.Models
                                    join p in portaldb.Productos 
                                    on pe.IDProduct equals p.IDProduct 
                                    where p.Codigo == equipoCode
+                                   && pe.Estatus_Produto == "Activo"
+                                   && pe.Estatus_Plan == "Activo"
+                                   && pe.LineType == "S"
                                    select new Plan(pe.IDPlan, pe.Nombre_Plan, pe.CodigoPlan,
                                        (from c in portaldb.PlanSpecs
                                         join nv in portaldb.NameValues

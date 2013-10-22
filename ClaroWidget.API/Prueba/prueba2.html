@@ -52,46 +52,63 @@
     </style>
 </head>
 <body>
-
-    <div data-bind="foreach: equipos">
-        <div class="equipo">
-
-            <div class="price-box">
-                <span class="txt_modelo" data-bind="text: $data.EquipoName"></span>
-            </div>
-            <div class="foto">
-                <a>
-                    <img class="foto" data-bind="attr: { src: $data.PhotoEquipo }" />
-                </a>
-            </div>
-            <div class="specs">
-
-                <ul>
-                    <li data-bind="text: $data.EquipoManufacturer"></li>
-                    <li data-bind="text: $data.PriceEquipo"></li>
-                    <li data-bind="text: $data.EquipoDescripcion"></li>
-                    <li data-bind="text: $data.InventarioEquipo"></li>
-                    <li data-bind="foreach: $data.Caracteristicas"> <strong data-bind="    text: Descripcion"></strong>
-                        : <i data-bind="text: Valor"></i>
-                        <br />
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+<table>
+	<thead>
+		<tr>
+			<td>Equipo</td>
+			<td>EquipoID</td>
+			<td>EquipoName</td>
+			<td>EquipoCode</td>
+			<td>EquipoDescripcion</td>
+			<td>PhotoEquipo</td>
+			<td>EquipoManufacturer</td>
+			<td>PriceEquipo</td>
+			<td>InventarioEquipo</td>
+			<td>Caracteristicas</td>
+		</tr>
+	</thead>
+	<tbody></tbody>
 </table>
+
+  <table>
+	<thead>
+		<tr data-bind="foreach: plans">
+			<th data-bind="text: $data.PlanName"></th>
+		</tr>
+	</thead>
+	<tbody data-bind="foreach: plans">
+		
+        <tr data-bind="foreach: $data.Caracteristicas">
+			<td data-bind="attr: { class: $data.Descripcion }, text: $data.Valor "></td>
+		</tr>
+	</tbody>
+</table>
+
 
 <script type="text/javascript">
 
     // This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
     function EquiposViewModel() {
         var self = this;
-        self.equipos = ko.observableArray();
+        self.plans = ko.observableArray();
 
-        $.getJSON("http://localhost:29086/api/equipos/byplan/BA10GCC3", self.equipos);
+        $.getJSON("http://localhost:29086/api/plans/byequipo/810089", self.plans);
 
         function thumbnailPhoto(photo) {
             return photo + "&thum=1";
+        }
+
+        self.caracteristicasNames = function () {
+            var ret = []
+            for (var i = 0; i < self.plans.length; i++) {
+                for (var j = 0; j < self.plans[c].Caracteristicas.length; j++) {
+                    if (ret.indexOf(self.plans[c].Caracteristicas[j].Descripcion) == -1) {
+                        ret.push(self.plans[c].Caracteristicas[j].Descripcion);
+                    }
+                }
+            }
+            return ret;
+
         }
     }
 

@@ -11,7 +11,7 @@ namespace ClaroWidget.API.Controllers
     {
         //
         // GET: /Plan/
-
+        [System.Web.Http.HttpGet]
         public IEnumerable<ClaroWidget.API.Models.Plan> all()
         {
             ClaroWidget.API.Models.Plan[] planes = ClaroWidget.API.Models.Plan.all().ToArray();
@@ -23,8 +23,8 @@ namespace ClaroWidget.API.Controllers
             ClaroWidget.API.Models.Plan[] planes = ClaroWidget.API.Models.Plan.byCategory(id).ToArray();
             return planes;
         }
-
-        public IEnumerable<ClaroWidget.API.Models.Plan> byProduct(string id)
+        [System.Web.Http.HttpGet]
+        public IEnumerable<ClaroWidget.API.Models.Plan> byEquipo(string id)
         {
             ClaroWidget.API.Models.Plan[] planes = ClaroWidget.API.Models.Plan.byEquipo(id).ToArray();
             return planes;
