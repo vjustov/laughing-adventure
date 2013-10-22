@@ -11,16 +11,22 @@ namespace ClaroWidget.API.Controllers
     {
         //
         // GET: /Equipos/
-
-        public IEnumerable<ClaroWidget.API.Models.Equipo> Get()
+        [System.Web.Http.HttpGet]
+        public IEnumerable<ClaroWidget.API.Models.Equipo> all()
         {
             ClaroWidget.API.Models.Equipo[] planes = ClaroWidget.API.Models.Equipo.all().ToArray();
             return planes;
         }
-
-        public IEnumerable<ClaroWidget.API.Models.Equipo> Get(string id)
+        [System.Web.Http.HttpGet]
+        public IEnumerable<ClaroWidget.API.Models.Equipo> byCategory(string id)
         {
             ClaroWidget.API.Models.Equipo[] planes = ClaroWidget.API.Models.Equipo.byCategory(id).ToArray();
+            return planes;
+        }
+        [System.Web.Http.HttpGet]
+        public IEnumerable<ClaroWidget.API.Models.Equipo> byPlan(string id)
+        {
+            ClaroWidget.API.Models.Equipo[] planes = ClaroWidget.API.Models.Equipo.byPlan(id).ToArray();
             return planes;
         }
     }

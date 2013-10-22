@@ -1,49 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../Scripts/knockout-2.2.0.js"></script>
-<script src="../Scripts/jquery-1.8.2.js"></script>
-    
+    <script src="../Scripts/knockout-2.2.0.js"></script>
+    <script src="../Scripts/jquery-1.8.2.js"></script>
+    <style>
+  
+.producto .price {
+    float: right;
+    width: 46%;
+}
+.price-box {
+    border-bottom: 1px solid #CDCDCD;
+    float: left;
+    font-size: 0.8em;
+    left: -4px;
+    margin-top: 2px;
+    min-height: 65px;
+    padding-left: 8px;
+    padding-top: 0;
+    position: relative;
+    width: 100%;
+}
+.foto {
+    display: block;
+    float: left;
+    height: 120px;
+    margin: 5px 0;
+    width: 100px;
+}
+.producto .descripcion {
+    display: inline-block;
+    width: 80%;
+}
+.description{
+    height:200px;
+    overflow:hidden;
+}
+.specs{
+    float:right;
+    width: 300px;
+}
+        .equipo
+        {
+            width:400px;
+            display:inline-block
+
+        }
+
+    </style>
 </head>
 <body>
 
-<div><h2>Let AJAX change this text</h2></div>
-    <table>
-	<thead>
-		<tr>
-			<td>Equipo</td>
-			<td>EquipoDescripcion</td>
-			<td>PhotoEquipo</td>
-			<td>EquipoManufacturer</td>
-			<td>PriceEquipo</td>
-			<td>InventarioEquipo</td>
-			<td>Caracteristicas</td>
-		</tr>
-	</thead>
-	<tbody id="lala" data-bind="foreach: $data.equipos">
-       
-		<tr>
-			<td data-bind="text: $data.EquipoName"></td>
-			<td data-bind="text: $data.Name"></td>
-			<td data-bind="text: PhotoEquipo"></td>
-			<td data-bind="text: EquipoManufacturer"></td>
-			<td data-bind="text: PriceEquipo"></td>
-		</tr>
-	</tbody>
+    <div data-bind="foreach: equipos">
+        <div class="equipo">
+
+            <div class="price-box">
+                <span class="txt_modelo" data-bind="text: $data.EquipoName"></span>
+            </div>
+            <div class="foto">
+                <a>
+                    <img class="foto" data-bind="attr: { src: $data.PhotoEquipo }" />
+                </a>
+            </div>
+            <div class="specs">
+
+                <ul>
+                    <li data-bind="text: $data.EquipoManufacturer"></li>
+                    <li data-bind="text: $data.PriceEquipo"></li>
+                    <li data-bind="text: $data.EquipoDescripcion"></li>
+                    <li data-bind="text: $data.InventarioEquipo"></li>
+                    <li data-bind="foreach: $data.Caracteristicas"> <strong data-bind="    text: Descripcion"></strong>
+                        : <i data-bind="text: Valor"></i>
+                        <br />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </table>
 
-
-
 <script type="text/javascript">
-  
+
     // This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
     function EquiposViewModel() {
         var self = this;
         self.equipos = ko.observableArray();
 
-        $.getJSON("http://localhost:29086/api/equipos/BB", self.equipos);
+        $.getJSON("http://localhost:29086/api/equipos/byplan/BA10GCC3", self.equipos);
 
-
+        function thumbnailPhoto(photo) {
+            return photo + "&thum=1";
+        }
     }
 
     // Activates knockout.js
@@ -55,5 +102,3 @@
 </body>
 
 </html>
-
-

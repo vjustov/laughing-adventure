@@ -28,7 +28,7 @@ namespace ClaroWidget.API.Models
         public string EquipoName { get; set; }
         public string EquipoCode { get; set; }
         public string EquipoDescripcion { get; set; }
-        public int? PhotoEquipo { get; set; }
+        public string PhotoEquipo { get; set; }
         public string EquipoManufacturer { get; set; }
         public decimal? PriceEquipo { get; set; }
         public int? InventarioEquipo { get; set; }
@@ -46,7 +46,7 @@ namespace ClaroWidget.API.Models
         }
 
         public Equipo(int id, string equipoName, string equipoCode, string equipoDescripcion, 
-                      int? photoEquipo, string equipoManufacturer, decimal? priceEquipo, 
+                      string photoEquipo, string equipoManufacturer, decimal? priceEquipo, 
                       int? inventarioEquipo, List<ParCaracteristicas> caracteristicas)
         {
             EquipoID = id;
@@ -64,6 +64,9 @@ namespace ClaroWidget.API.Models
         public static IEnumerable<Equipo> all()
         {
             PortalDataContext portaldb = new PortalDataContext(ACommerce.BO.Comun.GetConnString());
+            SecurityDataContext secdb = new SecurityDataContext(ACommerce.BO.Comun.GetConnString());
+
+            string parametro = secdb.Parametros.Where(p => p.Codigo.Equals("URL_head")).FirstOrDefault().Valor.ToString();
 
             // Selecciona todos los planes activos y luego selecciona todas las caracteristicas 
             //de cada uno de estos planes y las inserta en un diccionario, que luego usa para crear una lista de planes
@@ -73,8 +76,8 @@ namespace ClaroWidget.API.Models
                                         on p.nvManufacturer equals nv.IDNameValue
                                         where p.IsDeleted == '0' 
                                         && p.nvTipo_Producto == 52
-                                        select new Equipo(p.IDProduct, p.ProductName, p.Codigo, p.ProductDescription, 
-                                                        p.IDPhotoDefault, nv.Descripcion, p.ProductPrice1, 
+                                        select new Equipo(p.IDProduct, p.ProductName, p.Codigo, p.ProductDescription,
+                                                        p.IDPhotoDefault.HasValue ? parametro + "/Lib/Images.aspx?ID=" + p.IDPhotoDefault : "", nv.Descripcion, p.ProductPrice1, 
                                                         p.ProductStock,new List<ParCaracteristicas>())
                                      )
                                      .ToList();
@@ -85,6 +88,9 @@ namespace ClaroWidget.API.Models
         public static IEnumerable<Equipo> byCategory(string categoryCode)
         {
             PortalDataContext portaldb = new PortalDataContext(ACommerce.BO.Comun.GetConnString());
+            SecurityDataContext secdb = new SecurityDataContext(ACommerce.BO.Comun.GetConnString());
+
+            string parametro = secdb.Parametros.Where(p => p.Codigo.Equals("URL_head")).FirstOrDefault().Valor.ToString();
 
             //Selecciona todos los planes haciendo join con portalbycategory
             List<Equipo> planList = (from pp in portaldb.vw_PortalPlanByCategories
@@ -108,22 +114,29 @@ namespace ClaroWidget.API.Models
         public static IEnumerable<Equipo> byPlan(string planCode)
         {
             PortalDataContext portaldb = new PortalDataContext(ACommerce.BO.Comun.GetConnString());
+            SecurityDataContext secdb = new SecurityDataContext(ACommerce.BO.Comun.GetConnString());
+
+            string parametro = secdb.Parametros.Where(p => p.Codigo.Equals("URL_head")).FirstOrDefault().Valor.ToString();
 
             //Selecciona todos los planes haciendo join con portalbycategory
             List<Equipo> planList = (from pe in portaldb.vw_Producto_Plans
                                      join p in portaldb.Productos
                                      on pe.IDProduct equals p.IDProduct
                                      where pe.CodigoPlan == planCode
-                                     select new Equipo(p.IDProduct, pe.Nombre_Producto, p.Codigo, p.ProductDescription,p.IDPhotoDefault,
+                                     && pe.Estatus_Produto == "Activo"
+                                     && pe.Estatus_Plan == "Activo"
+                                     && pe.LineType == "S"
+                                     select new Equipo(p.IDProduct, pe.Nombre_Producto, p.Codigo, HtmlRemoval.StripTagsCharArray(p.ProductDescription),
+                                         p.IDPhotoDefault.HasValue ? parametro + "/Lib/Images.aspx?ID=" + p.IDPhotoDefault + "&thum=1": "",
                                          (from nv in portaldb.NameValues
                                           where nv.IDNameValue == p.nvManufacturer
-                                          select nv.Descripcion).ToString(),
+                                          select nv.Descripcion).FirstOrDefault().ToString(),
                                          p.ProductPrice1,p.ProductStock,
-                                         (from c in portaldb.PlanSpecs
+                                         (from ps in portaldb.ProductSpecs
                                           join nv in portaldb.NameValues
-                                          on c.nvPlan_Spec equals nv.IDNameValue
-                                          where c.IDPlan == pe.IDPlan
-                                          select new ParCaracteristicas(nv.Descripcion, c.Value)).ToList()
+                                          on ps.nvProduct_Spec equals nv.IDNameValue
+                                          where ps.IDProduct == p.IDProduct
+                                          select new ParCaracteristicas(nv.Descripcion, ps.Value)).ToList()
                                          ))
                                        .ToList();
 

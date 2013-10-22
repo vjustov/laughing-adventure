@@ -61,33 +61,35 @@ namespace ClaroWidget.API.Models
             return planList;
         }
 
-        //public static IEnumerable<Plan> byCategory(string categoryCode)
-        //{
-        //    PortalDataContext portaldb = new PortalDataContext(ACommerce.BO.Comun.GetConnString());   
+        public static IEnumerable<Plan> byCategory(string categoryCode)
+        {
+            PortalDataContext portaldb = new PortalDataContext(ACommerce.BO.Comun.GetConnString());
 
-        //    //Selecciona todos los planes haciendo join con portalbycategory
-        //    List<Plan> planList = (from pp in portaldb.vw_PortalPlanByCategories
-        //                      join c in portaldb.PortalCategories 
-        //                        on pp.IDCategory equals c.IDCategory
-        //                      join p in portaldb.Planes
-        //                        on pp.IDPlan equals p.IDPlan
-        //                      where c.CatCode.ToLower() == categoryCode.ToLower()
-        //                      select new Plan(p.IDPlan, p.PlanDescription, p.Codigo,
-        //                          (from ps in portaldb.PlanSpecs 
-        //                                     join nv in portaldb.NameValues 
-        //                                     on ps.nvPlan_Spec equals nv.IDNameValue 
-        //                                     where ps.IDPlan == p.IDPlan
-        //                           select new ParCaracteristicas(nv.Descripcion, ps.Value))
-        //                                            .ToList()))
-        //                                            .ToList();
+            //Selecciona todos los planes haciendo join con portalbycategory
+            List<Plan> planList = (from pp in portaldb.vw_PortalPlanByCategories
+                                   join c in portaldb.PortalCategories
+                                     on pp.IDCategory equals c.IDCategory
+                                   join p in portaldb.Planes
+                                     on pp.IDPlan equals p.IDPlan
+                                   where c.CatCode.ToLower() == categoryCode.ToLower()
+                                   select new Plan(p.IDPlan, p.PlanDescription, p.Codigo,
+                                       (from ps in portaldb.PlanSpecs
+                                        join nv in portaldb.NameValues
+                                        on ps.nvPlan_Spec equals nv.IDNameValue
+                                        where ps.IDPlan == p.IDPlan
+                                        select new ParCaracteristicas(nv.Descripcion, ps.Value))
+                                                         .ToList()))
+                                                    .ToList();
 
-        //    return planList;
-        //}
+            return planList;
+        }
 
 
         public static IEnumerable<Plan> byEquipo(string equipoCode)
         {
             PortalDataContext portaldb = new PortalDataContext(ACommerce.BO.Comun.GetConnString());
+            //               Dim _specs = From i In db.vw_ProductSpecs Where i.IDProduct = idProduct Select i
+
 
             //Selecciona todos los planes haciendo join con portalbycategory
             List<Plan> planList = (from pe in portaldb.vw_Producto_Plans

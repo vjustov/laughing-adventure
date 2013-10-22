@@ -20,14 +20,14 @@ namespace ClaroWidget.API.Controllers
         [System.Web.Http.HttpGet]
         public IEnumerable<ClaroWidget.API.Models.Plan> byCategory(string id)
         {
-            ClaroWidget.API.Models.Plan[] planes = ClaroWidget.API.Models.Plan.byEquipo(id).ToArray();
+            ClaroWidget.API.Models.Plan[] planes = ClaroWidget.API.Models.Plan.byCategory(id).ToArray();
             return planes;
         }
 
-        //public IEnumerable<ClaroWidget.API.Models.Plan> byProduct(string id)
-        //{
-        //    ClaroWidget.API.Models.Plan[] planes = ClaroWidget.API.Models.Plan.byCategory(id).ToArray();
-        //    return planes;
-        //}
+        public IEnumerable<ClaroWidget.API.Models.Plan> byProduct(string id)
+        {
+            ClaroWidget.API.Models.Plan[] planes = ClaroWidget.API.Models.Plan.byEquipo(id).ToArray();
+            return planes;
+        }
     }
 }
