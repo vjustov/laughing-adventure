@@ -73,12 +73,9 @@ namespace ClaroWidget.API.Models
                                      on pp.IDPlan equals p.IDPlan
                                    where c.CatCode.ToLower() == categoryCode.ToLower()
                                    select new Plan(p.IDPlan, p.PlanDescription, p.Codigo,
-                                       (from ps in portaldb.PlanSpecs
-                                        join nv in portaldb.NameValues
-                                        on ps.nvPlan_Spec equals nv.IDNameValue
-                                        where ps.IDPlan == p.IDPlan
-                                        select new ParCaracteristicas(nv.Descripcion, ps.Value))
-                                                         .ToList()))
+                                       (from ps in portaldb.vw_PlanSpecs
+                                        where ps.IDPlan == pp.IDPlan
+                                        select new ParCaracteristicas(ps.Especificacion, ps.Plan_Value)).ToList()))
                                                     .ToList();
 
             return planList;
@@ -100,11 +97,9 @@ namespace ClaroWidget.API.Models
                                    && pe.Estatus_Plan == "Activo"
                                    && pe.LineType == "S"
                                    select new Plan(pe.IDPlan, pe.Nombre_Plan, pe.CodigoPlan,
-                                       (from c in portaldb.PlanSpecs
-                                        join nv in portaldb.NameValues
-                                        on c.nvPlan_Spec equals nv.IDNameValue
-                                        where c.IDPlan == pe.IDPlan
-                                        select new ParCaracteristicas(nv.Descripcion, c.Value)).ToList()
+                                       (from ps in portaldb.vw_PlanSpecs
+                                        where ps.IDPlan == pe.IDPlan
+                                        select new ParCaracteristicas(ps.Especificacion, ps.Plan_Value)).ToList()
                                        ))
                                        .ToList();
 

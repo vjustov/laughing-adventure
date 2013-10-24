@@ -3,118 +3,128 @@
 <head>
     <script src="../Scripts/knockout-2.2.0.js"></script>
     <script src="../Scripts/jquery-1.8.2.js"></script>
+    <script src="../Scripts/ko.mappings.js"></script>
     <style>
-  
-.producto .price {
-    float: right;
-    width: 46%;
-}
-.price-box {
-    border-bottom: 1px solid #CDCDCD;
-    float: left;
-    font-size: 0.8em;
-    left: -4px;
-    margin-top: 2px;
-    min-height: 65px;
-    padding-left: 8px;
-    padding-top: 0;
-    position: relative;
-    width: 100%;
-}
-.foto {
-    display: block;
-    float: left;
-    height: 120px;
-    margin: 5px 0;
-    width: 100px;
-}
-.producto .descripcion {
-    display: inline-block;
-    width: 80%;
-}
-.description{
-    height:200px;
-    overflow:hidden;
-}
-.specs{
-    float:right;
-    width: 300px;
-}
-        .equipo {
-    width: 400px;
-    display: inline-block;
-    margin: 10px;
-    border: 1px solid rgb(205, 205, 205);
-    padding: 0 4px;
-    vertical-align: top;
-}
+
+        table > thead tr th {
+            font-size: 1.3em;
+            height: 20px;
+
+        }
+
+        body
+        {
+            color: rgb(102, 102, 102);
+            font-family: Helvetica,Arial,sans-serif;
+            font-size: 13px;
+        }
+
+        thead > tr
+        {
+            border-bottom: 1px solid rgb(208, 46, 16);
+        }
+        tbody, thead
+        {
+            padding: 10px;
+            text-align: center;
+        }
+
+        table td {
+            border: 1px solid rgb(221, 221, 221);
+        }
 
     </style>
 </head>
 <body>
+
 <table>
-	<thead>
-		<tr>
-			<td>Equipo</td>
-			<td>EquipoID</td>
-			<td>EquipoName</td>
-			<td>EquipoCode</td>
-			<td>EquipoDescripcion</td>
-			<td>PhotoEquipo</td>
-			<td>EquipoManufacturer</td>
-			<td>PriceEquipo</td>
-			<td>InventarioEquipo</td>
-			<td>Caracteristicas</td>
-		</tr>
-	</thead>
-	<tbody></tbody>
+    <thead>
+        <tr>
+            <th>Caracteristicas</th>
+            <!-- ko foreach: planNames -->
+            <th data-bind="text: $data"></th>
+            <!-- /ko -->
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: caracteristicas">
+        <tr>
+            <td data-bind="text: $data"></td>
+            <!-- ko foreach: { data: $root.rows($data) } -->
+            <td data-bind="text: $data ? $data : '-'">
+                
+            </td>
+            <!-- /ko -->
+        </tr>
+    </tbody>
 </table>
-
-  <table>
-	<thead>
-		<tr data-bind="foreach: plans">
-			<th data-bind="text: $data.PlanName"></th>
-		</tr>
-	</thead>
-	<tbody data-bind="foreach: plans">
-		
-        <tr data-bind="foreach: $data.Caracteristicas">
-			<td data-bind="attr: { class: $data.Descripcion }, text: $data.Valor "></td>
-		</tr>
-	</tbody>
-</table>
-
 
 <script type="text/javascript">
 
-    // This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
-    function EquiposViewModel() {
-        var self = this;
-        self.plans = ko.observableArray();
-
-        $.getJSON("http://localhost:29086/api/plans/byequipo/810089", self.plans);
-
-        function thumbnailPhoto(photo) {
-            return photo + "&thum=1";
-        }
-
-        self.caracteristicasNames = function () {
-            var ret = []
-            for (var i = 0; i < self.plans.length; i++) {
-                for (var j = 0; j < self.plans[c].Caracteristicas.length; j++) {
-                    if (ret.indexOf(self.plans[c].Caracteristicas[j].Descripcion) == -1) {
-                        ret.push(self.plans[c].Caracteristicas[j].Descripcion);
-                    }
-                }
-            }
-            return ret;
-
-        }
-    }
-
     // Activates knockout.js
     $(document).ready(function () {
-        ko.applyBindings(new EquiposViewModel());
+        $.getJSON("http://localhost:29086/api/plans/byequipo/810089").done(function (data) {
+            var obj = { 'plans': data };
+            viewModel = ko.mapping.fromJS(obj);
+
+            viewModel.planNames = ko.computed(function () {
+                return ko.utils.arrayMap(this.plans(), function (plan) {
+                    return plan.PlanName();
+                });
+            }, viewModel);
+
+            viewModel.caracteristicas = ko.computed(function () {
+                var descripciones = ko.utils.arrayMap(this.plans(), function (plan) {
+                    return ko.utils.arrayMap(plan.Caracteristicas(), function (carac) {
+                        return carac.Descripcion()
+                    });
+                });
+
+
+                return ko.utils.arrayGetDistinctValues(descripciones.reduce(function (x, y) {
+                    return x.concat(y);
+                }));
+            }, viewModel);
+
+            viewModel.rows = function (caracteristica) {
+                var cars = ko.utils.arrayMap(this.plans(), function (plan) {
+                    var valor = null;
+
+                    var car = ko.utils.arrayFirst(plan.Caracteristicas(), function (carac) {
+                        return carac.Descripcion() === caracteristica;
+                    });
+
+                    if (car && car.Valor) {
+                        valor = car.Valor();
+                    }
+
+                    return valor;
+                });
+                return cars;
+            };
+            /*
+            viewModel.rows = ko.computed(function () {
+                var self = this;
+                return ko.utils.arrayMap(this.plans(), function (plan) {
+                    var ret = [];
+                    for (var i = 0; i < self.caracteristicas().length; i++) {
+                        for (var j = 0; j < plan.Caracteristicas().length; j++) {
+                            if (self.caracteristicas[i] == plan.Caracteristicas()[j].Descripcion()) {
+                                ret.push(plan.Caracteristicas()[j].Descripcion());
+                            }
+                        }
+                        if (!ret[i]) {
+                            ret.push("-");
+                        }
+                    }
+                    return ret;
+                });
+            }, viewModel);
+            */
+            //console.log(viewModel.caracteristicas());
+
+            ko.applyBindings(viewModel);
+
+        });
     });
 </script>
 
