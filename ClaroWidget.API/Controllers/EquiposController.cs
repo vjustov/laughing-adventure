@@ -29,5 +29,13 @@ namespace ClaroWidget.API.Controllers
             ClaroWidget.API.Models.Equipo[] planes = ClaroWidget.API.Models.Equipo.byPlan(id).ToArray();
             return planes;
         }
+        [System.Web.Http.HttpGet]
+        public IEnumerable<ClaroWidget.API.Models.Equipo> compare(string equipos)
+        {
+            ClaroWidget.API.Models.Equipo[] planes = ClaroWidget.API.Models.Equipo.compare(equipos.Split(',')).ToArray();
+            return planes;
+        }
+        
+
     }
 }

@@ -9,14 +9,15 @@
         table > thead tr th {
             font-size: 1.3em;
             height: 20px;
-
+            border-bottom: 1px solid rgb(208, 46, 16);
         }
 
-        body
+        table
         {
             color: rgb(102, 102, 102);
             font-family: Helvetica,Arial,sans-serif;
             font-size: 13px;
+            border-collapse:collapse;
         }
 
         thead > tr
@@ -29,8 +30,10 @@
             text-align: center;
         }
 
-        table td {
+        tbody td {
+            font-size:1.2em;
             border: 1px solid rgb(221, 221, 221);
+            padding: 10px;
         }
 
     </style>
@@ -79,7 +82,6 @@
                     });
                 });
 
-
                 return ko.utils.arrayGetDistinctValues(descripciones.reduce(function (x, y) {
                     return x.concat(y);
                 }));
@@ -101,27 +103,7 @@
                 });
                 return cars;
             };
-            /*
-            viewModel.rows = ko.computed(function () {
-                var self = this;
-                return ko.utils.arrayMap(this.plans(), function (plan) {
-                    var ret = [];
-                    for (var i = 0; i < self.caracteristicas().length; i++) {
-                        for (var j = 0; j < plan.Caracteristicas().length; j++) {
-                            if (self.caracteristicas[i] == plan.Caracteristicas()[j].Descripcion()) {
-                                ret.push(plan.Caracteristicas()[j].Descripcion());
-                            }
-                        }
-                        if (!ret[i]) {
-                            ret.push("-");
-                        }
-                    }
-                    return ret;
-                });
-            }, viewModel);
-            */
-            //console.log(viewModel.caracteristicas());
-
+           
             ko.applyBindings(viewModel);
 
         });

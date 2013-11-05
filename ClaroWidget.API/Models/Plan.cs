@@ -85,7 +85,6 @@ namespace ClaroWidget.API.Models
         public static IEnumerable<Plan> byEquipo(string equipoCode)
         {
             PortalDataContext portaldb = new PortalDataContext(ACommerce.BO.Comun.GetConnString());
-            //               Dim _specs = From i In db.vw_ProductSpecs Where i.IDProduct = idProduct Select i
 
 
             //Selecciona todos los planes haciendo join con portalbycategory

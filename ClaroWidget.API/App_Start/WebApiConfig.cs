@@ -11,8 +11,11 @@ namespace ClaroWidget.API
         {
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{action}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                routeTemplate: "api/{controller}/{action}/{id}/{equipos}/{plans}",
+                defaults: new { id = RouteParameter.Optional,
+                equipos = RouteParameter.Optional,
+                plans = RouteParameter.Optional
+                }
             );
 
             // Uncomment the following line of code to enable query support for actions with an IQueryable or IQueryable<T> return type.

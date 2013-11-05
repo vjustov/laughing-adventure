@@ -3,8 +3,90 @@
 <head>
     <script src="../Scripts/knockout-2.2.0.js"></script>
     <script src="../Scripts/jquery-1.8.2.js"></script>
+    <script src="../Scripts/ko.mappings.js"></script>
     <style>
-  
+
+        
+
+/* Rating View */
+.rating {
+    /*	width: 100%;*/
+    display: inline;
+    margin: 5px 0;
+}
+
+.rating-view, .rating-view a:hover, .rating-view a:active, .rating-view a:focus, .rating-view .current_rating {
+    background: url(img/star.gif) left -1000px repeat-x;
+}
+
+.rating-view {
+    /*float: left;*/
+    margin: 0 0 5px;
+    padding: 0;
+    position: relative;
+    width: 80px;
+    height: 16px;
+    overflow: hidden;
+    background-position: left top;
+}
+
+    .rating-view li {
+        margin: 0;
+        padding: 0 !important;
+        display: inline;
+        list-style: none;
+    }
+
+    .rating-view a, .rating-view .current_rating {
+        position: absolute;
+        top: 0;
+        left: 0;
+        text-indent: -1000em;
+        height: 16px;
+        line-height: 16px;
+        overflow: hidden;
+    }
+
+        .rating-view a:hover, .rating-view a:active, .rating-view a:focus {
+            background-position: left bottom;
+        }
+
+    .rating-view .star-1 {
+        width: 20%;
+    }
+
+    .rating-view .star-2 {
+        width: 40%;
+    }
+
+    .rating-view .star-3 {
+        width: 60%;
+    }
+
+    .rating-view .star-4 {
+        width: 80%;
+    }
+
+    .rating-view .star-5 {
+        width: 100%;
+    }
+
+    .rating-view .current_rating {
+        z-index: 1;
+        background-position: left center;
+    }
+
+        body
+        {
+             color: rgb(102, 102, 102);
+            font-family: Helvetica,Arial,sans-serif;
+            font-size: 13px;
+        }
+
+        ul
+        {
+            list-style:none;
+        }
 .producto .price {
     float: right;
     width: 46%;
@@ -38,8 +120,11 @@
 }
 .specs{
     float:right;
-    width: 300px;
 }
+        .specs ul li
+        {
+            list-style-image: url("img/bullet.jpg");
+        }
         .equipo {
     width: 400px;
     display: inline-block;
@@ -49,6 +134,28 @@
     vertical-align: top;
 }
 
+     .equipo {
+    border: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    float: left;
+    height: 210px;
+    margin: 5px;
+    padding: 4px;
+    position: relative;
+    width: 240px;
+}
+
+      .comprar {
+    background-image: url("img/btn_carrito_mini.jpg");
+    background-position: center center;
+    float: right;
+    height: 29px;
+    margin: 2px 10px 5px 0px;
+    width: 50px;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
     </style>
 </head>
 <body>
@@ -57,7 +164,10 @@
         <div class="equipo">
 
             <div class="price-box">
-                <span class="txt_modelo" data-bind="text: $data.EquipoName"></span>
+                <h3 data-bind="text: $data.EquipoName"></h3>
+                <ul class="rating-view">
+                    <li data-bind="attr:  { class: 'current_rating star-'+ $data.Rating }">Estrellas</li>
+                </ul>
             </div>
             <div class="foto">
                 <a>
@@ -67,19 +177,27 @@
             <div class="specs">
 
                 <ul>
+                    
+                    
+                    <li>Postpago desde: <br />
+                        <span data-bind="text: $data.PriceEquipoPostPago == 0 ? $data.PriceEquipoPostPago : 'Gratis'"></span></li>
+                    <li>Prepago:<br />
+                        <span data-bind="text: $data.PriceEquipoPrePago == 0 ? $data.PriceEquipoPrePago : 'Gratis'"></span></li>
+                    <!--
                     <li data-bind="text: $data.EquipoManufacturer"></li>
-                    <li data-bind="text: $data.PriceEquipo"></li>
                     <li data-bind="text: $data.EquipoDescripcion"></li>
                     <li data-bind="text: $data.InventarioEquipo"></li>
                     <li data-bind="foreach: $data.Caracteristicas"> <strong data-bind="    text: Descripcion"></strong>
                         : <i data-bind="text: Valor"></i>
                         <br />
                     </li>
+                    -->
                 </ul>
+                <a class="comprar" data-bind="attr: {href: $data.Link}" ></a>
             </div>
         </div>
     </div>
-</table>
+
 
 <script type="text/javascript">
 
@@ -97,7 +215,11 @@
 
     // Activates knockout.js
     $(document).ready(function () {
-        ko.applyBindings(new EquiposViewModel());
+        $.getJSON("http://localhost:29086/api/equipos/byplan/IM-983").done(function (data) {
+            var obj = { 'equipos': data };
+            viewModel = ko.mapping.fromJS(obj);
+            ko.applyBindings(viewModel);
+        });
     });
 </script>
 
