@@ -3,7 +3,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace ClaroWidget.API.Areas.HelpPage
+namespace ClaroWidgetAPI.Areas.HelpPage
 {
     public static class ApiDescriptionExtensions
     {

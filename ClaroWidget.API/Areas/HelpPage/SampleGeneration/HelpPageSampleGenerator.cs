@@ -13,7 +13,7 @@ using System.Web.Http.Description;
 using System.Xml.Linq;
 using Newtonsoft.Json;
 
-namespace ClaroWidget.API.Areas.HelpPage
+namespace ClaroWidgetAPI.Areas.HelpPage
 {
     /// <summary>
     /// This class will generate the samples for the help page.
@@ -213,7 +213,7 @@ namespace ClaroWidget.API.Areas.HelpPage
                         break;
                     case SampleDirection.Response:
                     default:
-                        type = api.ResponseDescription.ResponseType ?? api.ResponseDescription.DeclaredType;
+                        type = api.ActionDescriptor.ReturnType;
                         formatters = api.SupportedResponseFormatters;
                         break;
                 }

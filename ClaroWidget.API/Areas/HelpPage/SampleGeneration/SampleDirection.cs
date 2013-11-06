@@ -1,4 +1,4 @@
-namespace ClaroWidget.API.Areas.HelpPage
+namespace ClaroWidgetAPI.Areas.HelpPage
 {
     /// <summary>
     /// Indicates whether the sample is used for request or response

@@ -1,15 +1,14 @@
 @using System.Web.Http
-@using System.Web.Http.Controllers
 @using System.Web.Http.Description
 @using System.Collections.ObjectModel
-@using ClaroWidget.API.Areas.HelpPage.Models
+@using ClaroWidgetAPI.Areas.HelpPage.Models
 @model Collection<ApiDescription>
 
 @{
     ViewBag.Title = "ASP.NET Web API Help Page";
 
     // Group APIs by controller
-    ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = Model.ToLookup(api => api.ActionDescriptor.ControllerDescriptor);
+    ILookup<string, ApiDescription> apiGroups = Model.ToLookup(api => api.ActionDescriptor.ControllerDescriptor.ControllerName);
 }
 
 <header>

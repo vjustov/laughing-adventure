@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../Scripts/knockout-2.2.0.js"></script>
+    <script src="../Scripts/jquery-1.8.2.js"></script>
+    <script src="../Scripts/ko.mappings.js"></script>
+    <style>
+        .link
+        {
+            background-color: rgb(238, 238, 238);
+        }
+        table > thead tr th {
+            font-size: 1.3em;
+            height: 20px;
+            border-bottom: 1px solid rgb(208, 46, 16);
+        }
+
+        table
+        {
+            color: rgb(102, 102, 102);
+            font-family: Helvetica,Arial,sans-serif;
+            font-size: 13px;
+            border-collapse:collapse;
+        }
+
+        thead > tr
+        {
+            border-bottom: 1px solid rgb(208, 46, 16);
+        }
+        tbody, thead
+        {
+            padding: 10px;
+            text-align: center;
+        }
+
+        tbody td {
+            font-size:1.2em;
+            border: 1px solid rgb(221, 221, 221);
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<table>
+    <thead>
+        <tr>
+            <th>Caracteristicas</th>
+            <!-- ko foreach: planNames -->
+            <th data-bind="text: $data"></th>
+            <!-- /ko -->
+        </tr>
+    </thead>
+    <tbody>
+        <!-- ko foreach: caracteristicas -->
+        <tr>
+            <td data-bind="text: $data"></td>
+            <!-- ko foreach: { data: $root.rows($data) } -->
+            <td data-bind="text: $data ? $data : '-'">
+                
+            </td>
+            <!-- /ko -->
+            <td data-bind>
+        </tr>
+        <!-- /ko -->
+        <tr>
+            <td class="link"> Mas informacion</td>
+            <!-- ko foreach: links -->
+            <td class="link"> <a data-bind="attr: {href: $data ? $data : '#'}">Ver mas </a>
+            </td>
+            <!-- /ko -->
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    // Activates knockout.js
+    $(document).ready(function () {
+        $.getJSON("http://localhost:31992/api/equipos/compare?equipos=818520,819302,811807,810011").done(function (data) {
+            var obj = { 'equipos': data };
+            viewModel = ko.mapping.fromJS(obj);
+
+            viewModel.planNames = ko.computed(function () {
+                return ko.utils.arrayMap(this.equipos(), function (equipo) {
+                    return equipo.EquipoName();
+                });
+            }, viewModel);
+
+            viewModel.caracteristicas = ko.computed(function () {
+                var descripciones = ko.utils.arrayMap(this.equipos(), function (equipo) {
+                    return ko.utils.arrayMap(equipo.Caracteristicas(), function (carac) {
+                        return carac.Descripcion()
+                    });
+                });
+
+                return ko.utils.arrayGetDistinctValues(descripciones.reduce(function (x, y) {
+                    return x.concat(y);
+                }));
+            }, viewModel);
+
+            viewModel.links = ko.computed(function () {
+                return ko.utils.arrayMap(this.equipos(), function (equipo) {
+                    return equipo.Link;
+                });
+            }, viewModel);
+            
+            viewModel.rows = function (caracteristica) {
+                var cars = ko.utils.arrayMap(this.equipos(), function (equipo) {
+                    var valor = null;
+
+                    var car = ko.utils.arrayFirst(equipo.Caracteristicas(), function (carac) {
+                        return carac.Descripcion() === caracteristica;
+                    });
+
+                    if (car && car.Valor) {
+                        valor = car.Valor();
+                    }
+
+                    return valor;
+                });
+                return cars;
+            };
+           
+            ko.applyBindings(viewModel);
+
+        });
+    });
+</script>
+
+</body>
+
+</html>

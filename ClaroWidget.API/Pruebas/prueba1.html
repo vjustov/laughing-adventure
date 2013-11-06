@@ -206,7 +206,7 @@
         var self = this;
         self.equipos = ko.observableArray();
 
-        $.getJSON("http://localhost:29086/api/equipos/byplan/BA10GCC3", self.equipos);
+        $.getJSON("http://localhost:31992/api/equipos/byplan/BA10GCC3", self.equipos);
 
         function thumbnailPhoto(photo) {
             return photo + "&thum=1";
@@ -215,7 +215,7 @@
 
     // Activates knockout.js
     $(document).ready(function () {
-        $.getJSON("http://localhost:29086/api/equipos/byplan/IM-983").done(function (data) {
+        $.getJSON("http://localhost:31992/api/equipos/byplan/IM-983").done(function (data) {
             var obj = { 'equipos': data };
             viewModel = ko.mapping.fromJS(obj);
             ko.applyBindings(viewModel);

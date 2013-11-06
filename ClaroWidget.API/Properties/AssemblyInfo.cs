@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClaroWidget.API")]
+[assembly: AssemblyTitle("ClaroWidgetAPI")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ClaroWidget.API")]
+[assembly: AssemblyProduct("ClaroWidgetAPI")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("902a1c69-3936-40de-ae6c-1b64c5a84b3f")]
+[assembly: Guid("37baa881-4365-4b3c-9e9d-c8c2c76f5b45")]
 
 // Version information for an assembly consists of the following four values:
 //

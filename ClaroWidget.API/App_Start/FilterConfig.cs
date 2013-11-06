@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace ClaroWidget.API
+namespace ClaroWidgetAPI
 {
     public class FilterConfig
     {

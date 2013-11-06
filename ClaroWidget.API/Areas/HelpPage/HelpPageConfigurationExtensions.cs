@@ -7,9 +7,9 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Description;
-using ClaroWidget.API.Areas.HelpPage.Models;
+using ClaroWidgetAPI.Areas.HelpPage.Models;
 
-namespace ClaroWidget.API.Areas.HelpPage
+namespace ClaroWidgetAPI.Areas.HelpPage
 {
     public static class HelpPageConfigurationExtensions
     {

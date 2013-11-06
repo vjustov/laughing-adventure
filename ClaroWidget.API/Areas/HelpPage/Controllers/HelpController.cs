@@ -1,9 +1,9 @@
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using ClaroWidget.API.Areas.HelpPage.Models;
+using ClaroWidgetAPI.Areas.HelpPage.Models;
 
-namespace ClaroWidget.API.Areas.HelpPage.Controllers
+namespace ClaroWidgetAPI.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.
@@ -24,7 +24,6 @@ namespace ClaroWidget.API.Areas.HelpPage.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.DocumentationProvider = Configuration.Services.GetDocumentationProvider();
             return View(Configuration.Services.GetApiExplorer().ApiDescriptions);
         }
 

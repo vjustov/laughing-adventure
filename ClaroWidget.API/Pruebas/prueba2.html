@@ -65,7 +65,7 @@
 
     // Activates knockout.js
     $(document).ready(function () {
-        $.getJSON("http://localhost:29086/api/plans/byequipo/810089").done(function (data) {
+        $.getJSON("http://localhost:31992/api/plans/byequipo/810089").done(function (data) {
             var obj = { 'plans': data };
             viewModel = ko.mapping.fromJS(obj);
 

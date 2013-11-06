@@ -6,7 +6,7 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Description;
 using System.Xml.XPath;
 
-namespace ClaroWidget.API.Areas.HelpPage
+namespace ClaroWidgetAPI.Areas.HelpPage
 {
     /// <summary>
     /// A custom <see cref="IDocumentationProvider"/> that reads the API documentation from an XML documentation file.
@@ -14,7 +14,6 @@ namespace ClaroWidget.API.Areas.HelpPage
     public class XmlDocumentationProvider : IDocumentationProvider
     {
         private XPathNavigator _documentNavigator;
-        private const string TypeExpression = "/doc/members/member[@name='T:{0}']";
         private const string MethodExpression = "/doc/members/member[@name='M:{0}']";
         private const string ParameterExpression = "param[@name='{0}']";
 
@@ -32,16 +31,19 @@ namespace ClaroWidget.API.Areas.HelpPage
             _documentNavigator = xpath.CreateNavigator();
         }
 
-        public string GetDocumentation(HttpControllerDescriptor controllerDescriptor)
-        {
-            XPathNavigator typeNode = GetTypeNode(controllerDescriptor);
-            return GetTagValue(typeNode, "summary");
-        }
-
         public virtual string GetDocumentation(HttpActionDescriptor actionDescriptor)
         {
             XPathNavigator methodNode = GetMethodNode(actionDescriptor);
-            return GetTagValue(methodNode, "summary");
+            if (methodNode != null)
+            {
+                XPathNavigator summaryNode = methodNode.SelectSingleNode("summary");
+                if (summaryNode != null)
+                {
+                    return summaryNode.Value.Trim();
+                }
+            }
+
+            return null;
         }
 
         public virtual string GetDocumentation(HttpParameterDescriptor parameterDescriptor)
@@ -62,12 +64,6 @@ namespace ClaroWidget.API.Areas.HelpPage
             }
 
             return null;
-        }
-
-        public string GetResponseDocumentation(HttpActionDescriptor actionDescriptor)
-        {
-            XPathNavigator methodNode = GetMethodNode(actionDescriptor);
-            return GetTagValue(methodNode, "returns");
         }
 
         private XPathNavigator GetMethodNode(HttpActionDescriptor actionDescriptor)
@@ -95,20 +91,6 @@ namespace ClaroWidget.API.Areas.HelpPage
             return name;
         }
 
-        private static string GetTagValue(XPathNavigator parentNode, string tagName)
-        {
-            if (parentNode != null)
-            {
-                XPathNavigator node = parentNode.SelectSingleNode(tagName);
-                if (node != null)
-                {
-                    return node.Value.Trim();
-                }
-            }
-
-            return null;
-        }
-
         private static string GetTypeName(Type type)
         {
             if (type.IsGenericType)
@@ -125,19 +107,6 @@ namespace ClaroWidget.API.Areas.HelpPage
             }
 
             return type.FullName;
-        }
-
-        private XPathNavigator GetTypeNode(HttpControllerDescriptor controllerDescriptor)
-        {
-            Type controllerType = controllerDescriptor.ControllerType;
-            string controllerTypeName = controllerType.FullName;
-            if (controllerType.IsNested)
-            {
-                // Changing the nested type name from OuterType+InnerType to OuterType.InnerType to match the XML documentation syntax.
-                controllerTypeName = controllerTypeName.Replace("+", ".");
-            }
-            string selectExpression = String.Format(CultureInfo.InvariantCulture, TypeExpression, controllerTypeName);
-            return _documentNavigator.SelectSingleNode(selectExpression);
         }
     }
 }
